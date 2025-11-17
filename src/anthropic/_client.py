@@ -174,10 +174,18 @@ class Anthropic(SyncAPIClient):
     @property
     @override
     def default_headers(self) -> dict[str, str | Omit]:
-        return {
+        headers = {
             **super().default_headers,
             "X-Stainless-Async": "false",
             "anthropic-version": "2023-06-01",
+        }
+        # Add OAuth beta header when using auth_token (for Claude Code compatibility)
+        if self.auth_token:
+            headers["anthropic-beta"] = (
+                "oauth-2025-04-20,claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14"
+            )
+        return {
+            **headers,
             **self._custom_headers,
         }
 
@@ -414,10 +422,18 @@ class AsyncAnthropic(AsyncAPIClient):
     @property
     @override
     def default_headers(self) -> dict[str, str | Omit]:
-        return {
+        headers = {
             **super().default_headers,
             "X-Stainless-Async": f"async:{get_async_library()}",
             "anthropic-version": "2023-06-01",
+        }
+        # Add OAuth beta header when using auth_token (for Claude Code compatibility)
+        if self.auth_token:
+            headers["anthropic-beta"] = (
+                "oauth-2025-04-20,claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14"
+            )
+        return {
+            **headers,
             **self._custom_headers,
         }
 
